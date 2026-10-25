@@ -67,6 +67,8 @@
 
 :root,
 .dark {
+  --radius: 0.5rem;
+
   --background: #09090b;
   --foreground: #fafafa;
   --card: #18181b;
