@@ -1,9 +1,12 @@
 import { BadgeColors, colorVariants } from "@/constants";
 import { cn } from "cn";
 
-interface AvatarProps {
-  userId: string;
+export interface AvatarUser {
+  id: string;
   initials: string;
+}
+interface AvatarProps {
+  user: AvatarUser;
 }
 
 const getRandomBadgeColor = (userId: string): BadgeColors => {
@@ -16,15 +19,15 @@ const getRandomBadgeColor = (userId: string): BadgeColors => {
   return keys[charSum % keys.length];
 };
 
-export const Avatar = ({ userId, initials }: AvatarProps) => {
+export const Avatar = ({ user }: AvatarProps) => {
   return (
     <div
       className={cn(
         "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium",
-        colorVariants[getRandomBadgeColor(userId)],
+        colorVariants[getRandomBadgeColor(user.id)],
       )}
     >
-      {initials}
+      {user.initials}
     </div>
   );
 };
