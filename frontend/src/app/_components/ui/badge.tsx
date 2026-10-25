@@ -3,11 +3,11 @@ import { cn } from "cn";
 import { ReactNode } from "react";
 
 interface BadgeProps {
-  color: BadgeColors;
-  children: ReactNode;
+  text: ReactNode;
+  color?: BadgeColors;
 }
 
-export const Badge = ({ color, children }: BadgeProps) => {
+export const Badge = ({ color = "indigo", text }: BadgeProps) => {
   return (
     <div
       className={cn(
@@ -15,7 +15,7 @@ export const Badge = ({ color, children }: BadgeProps) => {
         colorVariants[color],
       )}
     >
-      {children}
+      {text}
     </div>
   );
 };
