@@ -8,7 +8,7 @@ interface Badge {
   color: string;
 }
 
-interface CardProps {
+export interface CardProps {
   badges: Badge[];
   title: string;
   commentsCount: number;
@@ -25,7 +25,7 @@ export const Card = ({
     <article
       tabIndex={0}
       className={cn(
-        "p-3 flex flex-col gap-2 w-64",
+        "p-3 flex flex-col gap-2 w-full",
         "bg-card border-border rounded-lg outline-none",
         "hover:border-muted-foreground/30 hover:cursor-pointer focus-visible:ring-[3px] focus-visible:ring-ring/50",
         // drag
@@ -38,7 +38,7 @@ export const Card = ({
         })}
       </div>
 
-      <h2 className="text-sm font-medium wrap-break-word">{title}</h2>
+      <h3 className="text-sm font-medium wrap-break-word">{title}</h3>
 
       <div className="flex justify-between items-center">
         <div className="flex gap-1">
