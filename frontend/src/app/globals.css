@@ -50,8 +50,6 @@
   --color-column: var(--column);
   --color-accent-subtle: var(--accent-subtle);
   --color-border-dashed: var(--border-dashed);
-  --color-avatar: var(--avatar-bg);
-  --color-avatar-foreground: var(--avatar-text);
 
   --color-label-indigo: var(--label-indigo-bg);
   --color-label-indigo-foreground: var(--label-indigo-text);
@@ -69,6 +67,8 @@
 
 :root,
 .dark {
+  --radius: 0.5rem;
+
   --background: #09090b;
   --foreground: #fafafa;
   --card: #18181b;
@@ -91,8 +91,6 @@
   --column: #111113;
   --accent-subtle: #292b3e;
   --border-dashed: #3f3f46;
-  --avatar-bg: #2a2c4a;
-  --avatar-text: #a5b4fc;
 
   --label-indigo-bg: #292b3e;
   --label-indigo-text: #a5b4fc;
