@@ -1,3 +1,4 @@
+import { AddColumn } from "@/app/_components/shared/add-column";
 import { Column } from "@/app/_components/shared/column";
 
 export default function Home() {
@@ -28,10 +29,12 @@ export default function Home() {
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 dark:bg-black">
-      <Column title="To Do" cards={mockCards} />
+      {/* <Column title="To Do" cards={mockCards} />
       <Column title="To Do" />
       <Column title="To Do" cardOn={true} />
-      <Column title="To Do" cards={mockCards} cardOn={true} />
+      <Column title="To Do" cards={mockCards} cardOn={true} /> */}
+      <AddColumn />
+      <AddColumn />
     </div>
   );
 }
