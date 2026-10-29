@@ -3,11 +3,12 @@ import { cn } from "cn";
 import { ReactNode } from "react";
 
 interface BadgeProps {
+  id: string;
   text: ReactNode;
   color?: BadgeColors;
 }
 
-export const Badge = ({ color = "indigo", text }: BadgeProps) => {
+export const Badge = ({ id, color = "indigo", text }: BadgeProps) => {
   return (
     <div
       className={cn(

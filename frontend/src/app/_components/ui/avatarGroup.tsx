@@ -1,4 +1,4 @@
-import { Avatar } from "@/app/_components/ui/avatar";
+import { Avatar } from "@/app/_components/ui";
 
 export interface AvatarUser {
   id: string;
