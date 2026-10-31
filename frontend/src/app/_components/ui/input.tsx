@@ -5,6 +5,7 @@ import { cva } from "class-variance-authority";
 
 interface InputProps {
   label?: string;
+  action?: React.ReactNode;
   error?: string;
 }
 
@@ -27,6 +28,7 @@ const inputStyles = cva(
 
 export const Input = ({
   label,
+  action,
   error,
   className,
   type,
@@ -34,10 +36,14 @@ export const Input = ({
   ...props
 }: React.ComponentProps<"input"> & InputProps) => {
   return (
-    <div className="flex w-full flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-foreground">
-        {label}
-      </label>
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <label htmlFor={id} className="text-sm font-medium text-foreground">
+          {label}
+        </label>
+
+        {action}
+      </div>
       <InputPrimitive
         id={id}
         type={type}
