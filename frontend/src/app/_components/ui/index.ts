@@ -4,3 +4,4 @@ export * from "./avatar";
 export * from "./input";
 export * from "./textarea";
 export * from "./logo";
+export * from "./password-input";

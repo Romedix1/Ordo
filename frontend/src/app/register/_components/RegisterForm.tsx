@@ -1,0 +1,78 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { Input, PasswordInput } from "@/app/_components/ui";
+import { AuthShell } from "@/app/_components/auth";
+import { registerUser } from "@/lib/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { RegisterSchema, RegisterValues } from "@/schemas/register";
+
+export const RegisterForm = () => {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterValues>({
+    resolver: zodResolver(RegisterSchema),
+    mode: "onTouched",
+  });
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await registerUser(data);
+    } catch {
+      setError("root", { message: "Something went wrong. Try again." });
+    }
+  });
+
+  return (
+    <AuthShell
+      title="Create account"
+      description="Start organizing your projects in minutes"
+      footerText="Already have an account?"
+      footerLink={{ href: "/login", text: "Sign in" }}
+      actionLabel="Create account"
+      onSubmit={onSubmit}
+      isSubmitting={isSubmitting}
+      formError={errors.root?.message}
+    >
+      <Input
+        {...register("name")}
+        label="Name"
+        autoComplete="name"
+        placeholder="Your name"
+        error={errors.name?.message}
+        required
+      />
+
+      <Input
+        {...register("email")}
+        type="email"
+        label="Email"
+        autoComplete="email"
+        placeholder="email@example.com"
+        error={errors.email?.message}
+        required
+      />
+
+      <PasswordInput
+        {...register("password")}
+        label="Password"
+        autoComplete="new-password"
+        placeholder="••••••••"
+        error={errors.password?.message}
+        required
+      />
+
+      <PasswordInput
+        {...register("confirmPassword")}
+        label="Confirm password"
+        autoComplete="new-password"
+        placeholder="••••••••"
+        error={errors.confirmPassword?.message}
+        required
+      />
+    </AuthShell>
+  );
+};
