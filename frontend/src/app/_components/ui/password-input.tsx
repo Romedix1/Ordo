@@ -27,11 +27,14 @@ export const PasswordInput = (props: PasswordInputProps) => {
           aria-label={visible ? "Hide password" : "Show password"}
           aria-pressed={visible}
         >
+
+        <div className="px-3 h-full">
           {visible ? (
             <EyeOff className="w-4.5 h-4.5" />
           ) : (
             <Eye className="w-4.5 h-4.5" />
           )}
+          </div>
         </Button>
       }
     />

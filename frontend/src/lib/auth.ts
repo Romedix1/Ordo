@@ -1,3 +1,35 @@
 import { RegisterValues } from "@/schemas/register";
 
-export async function registerUser(data: RegisterValues) {}
+const API_URL = process.env.API_URL || "http://localhost:5259";
+
+export class RegisterValidationError extends Error {
+  constructor(public errors: Record<string, string[]>) {
+    super("Validation failed");
+  }
+}
+
+export async function registerUser(data: RegisterValues) {
+  const response = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+
+    if (errorData?.errors) {
+      throw new RegisterValidationError(errorData.errors);
+    }
+
+    throw new Error(errorData?.title || "Something went wrong. Try again.");
+  }
+
+  return response.json();
+}

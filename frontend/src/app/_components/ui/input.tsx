@@ -60,7 +60,7 @@ export const Input = ({
         />
 
         {endAdornment && (
-          <div className="absolute inset-y-0 right-3 flex items-center">
+          <div className="absolute inset-y-0 right-0 flex items-center">
             {endAdornment}
           </div>
         )}

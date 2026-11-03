@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { Input, PasswordInput } from "@/app/_components/ui";
 import { AuthShell } from "@/app/_components/auth";
-import { registerUser } from "@/lib/auth";
+import { RegisterValidationError, registerUser } from "@/lib/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema, RegisterValues } from "@/schemas/register";
 
@@ -21,8 +21,21 @@ export const RegisterForm = () => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       await registerUser(data);
-    } catch {
-      setError("root", { message: "Something went wrong. Try again." });
+    } catch (error) {
+      if (error instanceof RegisterValidationError) {
+        Object.entries(error.errors).forEach(([field, messages]) => {
+          setError(field as keyof RegisterValues, {
+            message: messages[0]
+          });
+        });
+
+        return;
+      }
+
+      const message =
+        error instanceof Error ? error.message : "Something went wrong. Try again.";
+
+      setError("root", { message });
     }
   });
 
