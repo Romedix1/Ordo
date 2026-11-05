@@ -6,6 +6,7 @@ import { AuthShell } from "@/app/_components/auth";
 import { RegisterValidationError, registerUser } from "@/lib/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema, RegisterValues } from "@/schemas/register";
+import { useRouter } from "next/router";
 
 export const RegisterForm = () => {
   const {
@@ -18,14 +19,20 @@ export const RegisterForm = () => {
     mode: "onTouched",
   });
 
+  // const router = useRouter();
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await registerUser(data);
+      const response = await registerUser(data);
+
+      // if (response) {
+      //   router.push("/confirm-email");
+      // }
     } catch (error) {
       if (error instanceof RegisterValidationError) {
         Object.entries(error.errors).forEach(([field, messages]) => {
           setError(field as keyof RegisterValues, {
-            message: messages[0]
+            message: messages[0],
           });
         });
 
@@ -33,7 +40,9 @@ export const RegisterForm = () => {
       }
 
       const message =
-        error instanceof Error ? error.message : "Something went wrong. Try again.";
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Try again.";
 
       setError("root", { message });
     }

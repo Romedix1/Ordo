@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Logo } from "@/app/_components/ui";
+import { GithubButton } from "@/app/_components/auth/github-button";
+import { Button, CardContainer, Logo } from "@/app/_components/ui";
 import { cn } from "cn";
 import { CircleAlert } from "lucide-react";
 import Link from "next/link";
@@ -38,44 +39,37 @@ export const AuthShell = ({
         <Logo />
       </div>
 
-      <form
-        onSubmit={onSubmit}
-        className={cn(
-          "flex flex-col gap-5 p-6 md:p-8 md:w-100",
-          "bg-card rounded-2xl",
-        )}
-      >
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold">{title}</h1>
-          <p className="text-sm text-muted-foreground">{description}</p>
-        </div>
-
-        {formError && (
-          <div
-            role="alers"
-            className="p-3 flex gap-2 items-center bg-destructive/10 border-destructive/30 rounded-lg text-sm text-destructive"
-          >
-            <CircleAlert className="text-destructive" />
-            {formError}
+      <form onSubmit={onSubmit}>
+        <CardContainer>
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-bold">{title}</h1>
+            <p className="text-sm text-muted-foreground">{description}</p>
           </div>
-        )}
 
-        {children}
+          {formError && (
+            <div
+              role="alers"
+              className="p-3 flex gap-2 items-center bg-destructive/10 border-destructive/30 rounded-lg text-sm text-destructive"
+            >
+              <CircleAlert className="text-destructive" />
+              {formError}
+            </div>
+          )}
 
-        <Button type="submit" disabled={isSubmitting}>
-          {actionLabel}
-        </Button>
+          {children}
 
-        <div className="flex items-center gap-3">
-          <span className={separatorStyles}></span>
-          <span className="uppercase text-xs text-muted-foreground">or</span>
-          <span className={separatorStyles}></span>
-        </div>
+          <Button type="submit" disabled={isSubmitting}>
+            {actionLabel}
+          </Button>
 
-        <Button type="button" variant="secondary" disabled={isSubmitting}>
-          <FaGithub />
-          Continue with GitHub
-        </Button>
+          <div className="flex items-center gap-3">
+            <span className={separatorStyles}></span>
+            <span className="uppercase text-xs text-muted-foreground">or</span>
+            <span className={separatorStyles}></span>
+          </div>
+
+          <GithubButton isSubmitting={isSubmitting} />
+        </CardContainer>
       </form>
 
       <div className="flex justify-center">

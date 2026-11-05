@@ -10,7 +10,7 @@ export const Logo = () => {
         alt="logo"
         className="h-8 w-8"
       />
-      <h2 className="text-xl text-foreground font-semibold">Ordo</h2>
+      <h2 className="text-2xl text-foreground font-semibold">Ordo</h2>
     </div>
   );
 };

@@ -54,6 +54,7 @@ export const Input = ({
           data-slot="input"
           className={cn(
             inputStyles({ variant: error ? "error" : "default" }),
+            endAdornment && "pr-10",
             className,
           )}
           {...props}
