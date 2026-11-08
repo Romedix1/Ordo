@@ -31,11 +31,7 @@ export const AuthShell = ({
   const separatorStyles = "w-full block bg-border h-px";
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-center">
-        <Logo />
-      </div>
-
+    <>
       <form onSubmit={onSubmit}>
         <CardContainer>
           <div className="flex flex-col gap-1">
@@ -73,6 +69,6 @@ export const AuthShell = ({
           </Link>
         </p>
       </div>
-    </div>
+    </>
   );
 };

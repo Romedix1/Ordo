@@ -1,7 +1,7 @@
 "use client";
 
-import { ErrorBox } from "@/app/_components/ui";
-import { ResendButton } from "@/app/confirm-email/_components/resend-button";
+import { ErrorBox, SuccessBox } from "@/app/_components/ui";
+import { ResendButton } from "@/app/(auth)/confirm-email/_components/resend-button";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -11,6 +11,7 @@ export const ConfirmEmailCard = () => {
   const email = searchParams.get("email");
 
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   return (
     <>
@@ -28,8 +29,13 @@ export const ConfirmEmailCard = () => {
       </div>
 
       {error && <ErrorBox error={error} />}
+      {success && <SuccessBox message={success} />}
 
-      <ResendButton userId={userId || ""} onError={setError} />
+      <ResendButton
+        userId={userId || ""}
+        onError={setError}
+        onSuccess={setSuccess}
+      />
     </>
   );
 };
