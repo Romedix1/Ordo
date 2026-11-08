@@ -8,7 +8,12 @@ export class RegisterValidationError extends Error {
   }
 }
 
-export async function registerUser(data: RegisterValues) {
+export interface RegisterResponse {
+  id: string;
+  email: string;
+}
+
+export async function registerUser(data: RegisterValues): Promise<RegisterResponse> {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: {

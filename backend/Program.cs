@@ -1,7 +1,9 @@
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Ordo.Api.Data;
 using Ordo.Api.Endpoints;
+using Ordo.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +21,8 @@ builder.Services
 
         options.User.RequireUniqueEmail = true;
     })
-    .AddEntityFrameworkStores<AppDbContext>();
+    .AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
 
 var origins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? [];
 
@@ -29,10 +32,41 @@ builder.Services.AddCors(option => option.AddPolicy("Frontend", policy => policy
     .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE")
     .AllowCredentials()));
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddPolicy("EmailResend", httpContext =>
+          RateLimitPartition.GetFixedWindowLimiter(
+              partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+              factory: _ => new FixedWindowRateLimiterOptions
+              {
+                  PermitLimit = 2,
+                  Window = TimeSpan.FromMinutes(1),
+                  QueueLimit = 0
+              }));
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsJsonAsync(new
+        {
+            title = "Too many requests. Please wait a minute before requesting another email."
+        }, cancellationToken: token);
+    };
+});
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(option => option.TokenLifespan = TimeSpan.FromHours(24));
+builder.Services.AddTransient<EmailService>();
+builder.Services.AddScoped<EmailConfirmationService>();
+builder.Services.AddDataProtection();
+
 var app = builder.Build();
 
 app.UseCors("Frontend");
+app.UseRateLimiter();
 
 app.MapRegisterUser();
+app.MapResendConfirmationEmail();
 
 app.Run();

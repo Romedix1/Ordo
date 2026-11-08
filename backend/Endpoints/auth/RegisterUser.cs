@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Ordo.Api.Services;
 
 namespace Ordo.Api.Endpoints;
 
@@ -15,7 +16,8 @@ public static class RegisterUser
         return app;
     }
 
-    private static async Task<IResult> Register(Request request, UserManager<User> userManager)
+    private static async Task<IResult> Register(
+        Request request, UserManager<User> userManager, EmailConfirmationService confirmation, CancellationToken ct)
     {
         var errors = new Dictionary<string, string[]>();
 
@@ -63,6 +65,7 @@ public static class RegisterUser
             return Results.BadRequest(result.Errors);
         }
 
+        await confirmation.Send(user, ct);
         return Results.Created($"/users/{user.Id}", new Response(user.Id, user.Email));
     }
 }

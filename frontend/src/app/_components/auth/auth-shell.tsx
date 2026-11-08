@@ -1,12 +1,9 @@
 "use client";
 
 import { GithubButton } from "@/app/_components/auth/github-button";
-import { Button, CardContainer, Logo } from "@/app/_components/ui";
-import { cn } from "cn";
-import { CircleAlert } from "lucide-react";
+import { Button, CardContainer, ErrorBox, Logo } from "@/app/_components/ui";
 import Link from "next/link";
 import { ReactNode } from "react";
-import { FaGithub } from "react-icons/fa";
 
 interface AuthShellProps {
   title: string;
@@ -46,15 +43,7 @@ export const AuthShell = ({
             <p className="text-sm text-muted-foreground">{description}</p>
           </div>
 
-          {formError && (
-            <div
-              role="alers"
-              className="p-3 flex gap-2 items-center bg-destructive/10 border-destructive/30 rounded-lg text-sm text-destructive"
-            >
-              <CircleAlert className="text-destructive" />
-              {formError}
-            </div>
-          )}
+          {formError && <ErrorBox error={formError} />}
 
           {children}
 

@@ -1,17 +1,10 @@
 import { CardContainer, Logo } from "@/app/_components/ui";
-import { ResendButton } from "@/app/confirm-email/_components";
+import { ConfirmEmailCard } from "@/app/confirm-email/_components";
 import { Mail } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 
-interface ConfirmEmailPageProps {
-  params: Promise<{ email: string }>;
-}
-
-export default async function ConfirmEmailPage({
-  params,
-}: ConfirmEmailPageProps) {
-  const { email } = await params;
-
+export default function ConfirmEmailPage() {
   return (
     <div className="flex items-center justify-center h-screen px-4">
       <div className="flex flex-col gap-6">
@@ -24,18 +17,9 @@ export default async function ConfirmEmailPage({
             <Mail className="w-7 h-7 text-primary" />
           </div>
 
-          <div className="flex flex-col justify-center items-center gap-2">
-            <h2 className="text-2xl font-semibold text-foreground">
-              Check your email
-            </h2>
-            <p className="text-sm text-center text-muted-foreground">
-              We sent a confirmation link to{" "}
-              <span className="text-foreground font-medium">{email}</span>.
-              Click it to activate your account.
-            </p>
-          </div>
-
-          <ResendButton />
+          <Suspense>
+            <ConfirmEmailCard />
+          </Suspense>
 
           <p className="text-xs text-muted-foreground text-center">
             Didn{"'"}t get it? Check your spam folder. The link expires in 24
