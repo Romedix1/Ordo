@@ -3,3 +3,8 @@ export * from "./badge";
 export * from "./avatar";
 export * from "./input";
 export * from "./textarea";
+export * from "./logo";
+export * from "./password-input";
+export * from "./card-container";
+export * from "./error-box";
+export * from "./success-box";

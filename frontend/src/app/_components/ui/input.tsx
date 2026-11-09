@@ -5,10 +5,12 @@ import { cva } from "class-variance-authority";
 
 interface InputProps {
   label?: string;
+  action?: React.ReactNode;
   error?: string;
+  endAdornment?: React.ReactNode;
 }
 
-const inputStyles = cva(
+export const inputStyles = cva(
   "w-full rounded-md border bg-background px-3 py-1.5 text-sm duration-200 text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
@@ -27,27 +29,44 @@ const inputStyles = cva(
 
 export const Input = ({
   label,
+  action,
   error,
   className,
+  endAdornment,
   type,
   id,
   ...props
 }: React.ComponentProps<"input"> & InputProps) => {
   return (
-    <div className="flex w-full flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-foreground">
-        {label}
-      </label>
-      <InputPrimitive
-        id={id}
-        type={type}
-        data-slot="input"
-        className={cn(
-          inputStyles({ variant: error ? "error" : "default" }),
-          className,
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <label htmlFor={id} className="text-sm font-medium text-foreground">
+          {label}
+        </label>
+
+        {action}
+      </div>
+
+      <div className="relative">
+        <InputPrimitive
+          id={id}
+          type={type}
+          data-slot="input"
+          className={cn(
+            inputStyles({ variant: error ? "error" : "default" }),
+            endAdornment && "pr-10",
+            className,
+          )}
+          {...props}
+        />
+
+        {endAdornment && (
+          <div className="absolute inset-y-0 right-0 flex items-center">
+            {endAdornment}
+          </div>
         )}
-        {...props}
-      />
+      </div>
+
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
