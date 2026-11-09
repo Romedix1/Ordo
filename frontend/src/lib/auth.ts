@@ -9,6 +9,7 @@ export class RegisterValidationError extends Error {
 }
 
 export class ResendEmailError extends Error {}
+export class VerifyEmailError extends Error {}
 
 export interface RegisterResponse {
   id: string;
@@ -54,13 +55,29 @@ export async function resendConfirmationEmail(payload: {
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => null);
+    const errorData = await response.json();
+
     const firstError = errorData?.errors
       ? Object.values(errorData.errors).flat()[0]
       : null;
+
     const errorMessage =
       firstError || errorData?.title || "Failed to resend confirmation email.";
 
     throw new ResendEmailError(errorMessage as string);
+  }
+}
+
+export async function verifyEmail(payload: { token: string; userId: string }) {
+  const response = await fetch(`${API_URL}/auth/verify-email`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+
+    throw new VerifyEmailError(errorData.errors);
   }
 }

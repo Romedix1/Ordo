@@ -1,6 +1,6 @@
-import { CardContainer } from "@/app/_components/ui";
-import { Button } from "@base-ui/react";
+import { Button, CardContainer } from "@/app/_components/ui";
 import { CircleCheckBig } from "lucide-react";
+import Link from "next/link";
 
 export const EmailVerifiedSuccess = () => {
   return (
@@ -19,7 +19,9 @@ export const EmailVerifiedSuccess = () => {
           </p>
         </div>
 
-        <Button className="w-full">Continue to sign in</Button>
+        <Button render={<Link href="/login" />} className="w-full">
+          Continue to sign in
+        </Button>
       </CardContainer>
     </div>
   );

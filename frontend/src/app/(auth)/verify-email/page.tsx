@@ -1,9 +1,10 @@
-import { EmailVerifiedFailed } from "@/app/(auth)/verify-email/_components/email-verified-failed";
+import { VerifyEmailCard } from "@/app/(auth)/verify-email/_components";
+import { Suspense } from "react";
 
 export default function VerifyEmailPage() {
   return (
-    <>
-      <EmailVerifiedFailed />
-    </>
+    <Suspense>
+      <VerifyEmailCard />
+    </Suspense>
   );
 }

@@ -24,11 +24,15 @@ const buttonVariants = cva(
 export const Button = ({
   className,
   variant = "primary",
+  nativeButton,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) => {
+  const isNative = nativeButton ?? (props.render ? false : true);
+
   return (
     <ButtonPrimitive
       data-slot="button"
+      nativeButton={isNative}
       className={cn(buttonVariants({ variant, className }))}
       {...props}
     />

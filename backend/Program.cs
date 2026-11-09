@@ -68,5 +68,6 @@ app.UseRateLimiter();
 
 app.MapRegisterUser();
 app.MapResendConfirmationEmail();
+app.MapVerifyEmail();
 
 app.Run();
