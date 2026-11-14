@@ -11,7 +11,7 @@ public static class RegisterUser
 
     public static IEndpointRouteBuilder MapRegisterUser(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/auth/register", Register).WithTags("Auth");
+        app.MapPost("/auth/register", Register).WithTags("Auth").RequireRateLimiting("Register");
 
         return app;
     }

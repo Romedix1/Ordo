@@ -1,8 +1,10 @@
+import { LoginValues } from "@/schemas/login";
 import { RegisterValues } from "@/schemas/register";
+import { error } from "console";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5259";
 
-export class RegisterValidationError extends Error {
+export class ValidationError extends Error {
   constructor(public errors: Record<string, string[]>) {
     super("Validation failed");
   }
@@ -34,8 +36,8 @@ export async function registerUser(
   if (!response.ok) {
     const errorData = await response.json();
 
-    if (errorData?.errors) {
-      throw new RegisterValidationError(errorData.errors);
+    if (errorData.errors) {
+      throw new ValidationError(errorData.errors);
     }
 
     throw new Error(errorData?.title || "Something went wrong. Try again.");
@@ -80,4 +82,25 @@ export async function verifyEmail(payload: { token: string; userId: string }) {
 
     throw new VerifyEmailError(errorData.errors);
   }
+}
+
+export async function loginUser(data: LoginValues) {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+
+    if (errorData.errors) {
+      throw new ValidationError(errorData.errors);
+    }
+
+    throw new Error(errorData?.title || "Something went wrong. Try again.");
+  }
+
+  return response.json();
 }

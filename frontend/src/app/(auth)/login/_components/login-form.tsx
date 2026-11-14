@@ -3,11 +3,10 @@
 import { useForm } from "react-hook-form";
 import { Input, PasswordInput } from "@/app/_components/ui";
 import { AuthShell } from "@/app/_components/auth";
-import { RegisterValidationError, registerUser } from "@/lib/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterSchema, RegisterValues } from "@/schemas/register";
 import { useRouter } from "next/navigation";
 import { LoginSchema, LoginValues } from "@/schemas/login";
+import { loginUser, ValidationError } from "@/lib";
 
 export const LoginForm = () => {
   const {
@@ -20,8 +19,37 @@ export const LoginForm = () => {
     mode: "onTouched",
   });
 
+  const router = useRouter();
+
   const onSubmit = handleSubmit(async (data) => {
-    const response = true;
+    try {
+      const response = await loginUser(data);
+
+      if (response) {
+        router.push("/");
+      }
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        Object.entries(error.errors).forEach(([field, messages]) => {
+          const key = field.toLowerCase();
+
+          if (key === "email" || key === "password") {
+            setError(key, { message: messages[0] });
+          } else {
+            setError("root", { message: messages[0] });
+          }
+        });
+
+        return;
+      }
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Try again.";
+
+      setError("root", { message });
+    }
   });
 
   return (
