@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Ordo.Api.Services;
 using Org.BouncyCastle.Asn1.Ocsp;
 
+namespace Ordo.Api.Endpoints;
+
 public static class LoginUser
 {
     public record Request(string Email, string Password);

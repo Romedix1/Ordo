@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { LoginSchema, LoginValues } from "@/schemas/login";
 import { loginUser, ValidationError } from "@/lib";
+import Link from "next/link";
 
 export const LoginForm = () => {
   const {
@@ -80,6 +81,11 @@ export const LoginForm = () => {
         placeholder="••••••••"
         error={errors.password?.message}
         required
+        action={
+          <Link className="text-xs text-primary" href="/forgot-password">
+            Forgot password
+          </Link>
+        }
       />
     </AuthShell>
   );
