@@ -2,7 +2,7 @@
 
 import { Button } from "@/app/_components/ui";
 import { useCountdown } from "@/hooks";
-import { resendConfirmationEmail, ResendEmailError } from "@/lib";
+import { ApiError, resendConfirmationEmail } from "@/lib";
 import { useState } from "react";
 
 interface ResendButtonProps {
@@ -35,7 +35,7 @@ export const ResendButton = ({
       starCountdown();
     } catch (error) {
       const message =
-        error instanceof ResendEmailError
+        error instanceof ApiError
           ? error.message
           : "Something went wrong. Try again.";
 

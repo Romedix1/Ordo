@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { Input, PasswordInput } from "@/app/_components/ui";
 import { AuthShell } from "@/app/_components/auth";
-import { RegisterValidationError, registerUser } from "@/lib/auth";
+import { ValidationError, registerUser } from "@/lib/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema, RegisterValues } from "@/schemas/register";
 import { useRouter } from "next/navigation";
@@ -29,7 +29,7 @@ export const RegisterForm = () => {
         router.push(`/confirm-email?userId=${response.id}&email=${encodeURIComponent(response.email)}`);
       }
     } catch (error) {
-      if (error instanceof RegisterValidationError) {
+      if (error instanceof ValidationError) {
         Object.entries(error.errors).forEach(([field, messages]) => {
           setError(field as keyof RegisterValues, {
             message: messages[0],

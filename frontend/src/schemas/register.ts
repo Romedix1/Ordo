@@ -1,6 +1,6 @@
 import z from "zod";
 
-const passwordRegex =
+export const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).{8,}$/;
 
 export const RegisterSchema = z

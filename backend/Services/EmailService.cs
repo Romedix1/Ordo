@@ -12,12 +12,24 @@ public class EmailService(IConfiguration config)
         message.From.Add(MailboxAddress.Parse(config["Email:From"]!));
         message.To.Add(MailboxAddress.Parse(to));
         message.Subject = subject;
-        message.Body = new BodyBuilder { HtmlBody = htmlBody }.ToMessageBody();
+
+        var builder = new BodyBuilder { HtmlBody = htmlBody };
+
+        if (htmlBody.Contains($"cid:{EmailTemplates.LogoCid}"))
+        {
+            var logo = await builder.LinkedResources.AddAsync(
+                Path.Combine(AppContext.BaseDirectory, "Assets", "logo.png"), ct);
+            logo.ContentId = EmailTemplates.LogoCid;
+        }
+
+        message.Body = builder.ToMessageBody();
 
         using var client = new SmtpClient();
+
         await client.ConnectAsync(config["Email:Host"]!, int.Parse(config["Email:Port"]!), SecureSocketOptions.Auto, ct);
 
         var user = config["Email:User"];
+
         if (!string.IsNullOrEmpty(user))
             await client.AuthenticateAsync(user, config["Email:Password"]!, ct);
 
