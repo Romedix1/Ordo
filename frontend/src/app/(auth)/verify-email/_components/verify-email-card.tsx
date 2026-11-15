@@ -25,7 +25,7 @@ export const VerifyEmailCard = () => {
     verifyEmail({ userId, token })
       .then(() => setStatus("success"))
       .catch(() => setStatus("error"));
-  }, [userId, token, status]);
+  }, [userId, token]);
 
   if (status === "loading") {
     return (

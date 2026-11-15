@@ -2,7 +2,7 @@
 
 import { Button, Input } from "@/app/_components/ui";
 import { useCountdown } from "@/hooks";
-import { resendConfirmationEmail, ResendEmailError } from "@/lib";
+import { ApiError, resendConfirmationEmail } from "@/lib";
 import { ResendEmailSchema, ResendEmailValues } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -38,7 +38,7 @@ export const SendNewLinkSection = ({
       starCountdown();
     } catch (error) {
       const message =
-        error instanceof ResendEmailError
+        error instanceof ApiError
           ? error.message
           : "Something went wrong. Try again.";
 

@@ -102,6 +102,7 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(option => option.
 builder.Services.AddTransient<EmailService>();
 builder.Services.AddScoped<EmailConfirmationService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<EmailForgotPasswordService>();
 builder.Services.AddDataProtection();
 
 var app = builder.Build();
@@ -113,5 +114,6 @@ app.MapRegisterUser();
 app.MapResendConfirmationEmail();
 app.MapVerifyEmail();
 app.MapLoginUser();
+app.MapForgotPassword();
 
 app.Run();
