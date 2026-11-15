@@ -69,12 +69,22 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0
             }));
 
+    options.AddPolicy("PasswordReset", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+
     options.OnRejected = async (context, token) =>
     {
         context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
         await context.HttpContext.Response.WriteAsJsonAsync(new
         {
-            title = "Too many requests. Please wait a minute before requesting another email."
+            title = "Too many requests. Please wait a minute and try again."
         }, cancellationToken: token);
     };
 });
@@ -115,5 +125,6 @@ app.MapResendConfirmationEmail();
 app.MapVerifyEmail();
 app.MapLoginUser();
 app.MapForgotPassword();
+app.MapChangePassword();
 
 app.Run();

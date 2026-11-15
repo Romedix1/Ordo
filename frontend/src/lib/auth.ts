@@ -116,3 +116,19 @@ export async function forgotPasswordEmail(
     await throwApiError(response, "Failed to send reset link.");
   }
 }
+
+export async function changePassword(payload: {
+  token: string;
+  userId: string;
+  newPassword: string;
+}): Promise<void> {
+  const response = await fetch(`${API_URL}/auth/change-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    await throwApiError(response, "Failed to change password.");
+  }
+}
