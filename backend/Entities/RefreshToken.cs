@@ -1,3 +1,4 @@
+namespace Ordo.Api.Entities;
 
 public class RefreshToken
 {

@@ -6,7 +6,7 @@ namespace Ordo.Api.Services;
 
 public class EmailService(IConfiguration config)
 {
-    public async Task Send(string to, string subject, string htmlBody, CancellationToken ct = default)
+    public async Task SendAsync(string to, string subject, string htmlBody, CancellationToken ct = default)
     {
         var message = new MimeMessage();
         message.From.Add(MailboxAddress.Parse(config["Email:From"]!));

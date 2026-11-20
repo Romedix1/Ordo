@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Ordo.Api.Data;
 using Ordo.Api.Endpoints;
+using Ordo.Api.Entities;
+using Ordo.Api.Extensions;
 using Ordo.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,59 +37,7 @@ builder.Services.AddCors(option => option.AddPolicy("Frontend", policy => policy
     .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE")
     .AllowCredentials()));
 
-builder.Services.AddRateLimiter(options =>
-{
-    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-
-    options.AddPolicy("EmailResend", httpContext =>
-          RateLimitPartition.GetFixedWindowLimiter(
-              partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
-              factory: _ => new FixedWindowRateLimiterOptions
-              {
-                  PermitLimit = 2,
-                  Window = TimeSpan.FromMinutes(1),
-                  QueueLimit = 0
-              }));
-
-    options.AddPolicy("Register", httpContext =>
-        RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
-            factory: _ => new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 5,
-                Window = TimeSpan.FromMinutes(1),
-                QueueLimit = 0
-            }));
-
-    options.AddPolicy("Login", httpContext =>
-        RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
-            factory: _ => new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 5,
-                Window = TimeSpan.FromMinutes(1),
-                QueueLimit = 0
-            }));
-
-    options.AddPolicy("PasswordReset", httpContext =>
-        RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
-            factory: _ => new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 5,
-                Window = TimeSpan.FromMinutes(1),
-                QueueLimit = 0
-            }));
-
-    options.OnRejected = async (context, token) =>
-    {
-        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-        await context.HttpContext.Response.WriteAsJsonAsync(new
-        {
-            title = "Too many requests. Please wait a minute and try again."
-        }, cancellationToken: token);
-    };
-});
+builder.Services.AddRateLimiting();
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -109,11 +59,13 @@ builder.Services
     });
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(option => option.TokenLifespan = TimeSpan.FromHours(24));
-builder.Services.AddTransient<EmailService>();
 builder.Services.AddScoped<EmailConfirmationService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<EmailForgotPasswordService>();
 builder.Services.AddDataProtection();
+builder.Services.AddSingleton<EmailService>();
+builder.Services.AddScoped<EmailOutbox>();
+builder.Services.AddHostedService<EmailOutboxProcessor>();
 
 var app = builder.Build();
 
