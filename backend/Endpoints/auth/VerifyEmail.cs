@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Ordo.Api.Entities;
 
 namespace Ordo.Api.Endpoints;
 

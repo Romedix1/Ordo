@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Ordo.Api.Services;
+using Ordo.Api.Entities;
 
 namespace Ordo.Api.Endpoints;
 
@@ -36,7 +37,7 @@ public static class ResendConfirmationEmail
 
         if (user is not null && !user.EmailConfirmed)
         {
-            await confirmation.Send(user, ct);
+            await confirmation.SendAsync(user, ct);
         }
 
         return Results.NoContent();

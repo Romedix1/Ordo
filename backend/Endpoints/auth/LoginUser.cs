@@ -1,13 +1,16 @@
 using Microsoft.AspNetCore.Identity;
 using Ordo.Api.Services;
-using Org.BouncyCastle.Asn1.Ocsp;
+using Ordo.Api.Entities;
 
 namespace Ordo.Api.Endpoints;
 
 public static class LoginUser
 {
+    private static readonly Lazy<string> DummyHash = new(() => new PasswordHasher<User>().HashPassword(new User(), Guid.NewGuid().ToString()));
+
     public record Request(string Email, string Password);
     public record Response(string AccessToken);
+
     public static IEndpointRouteBuilder MapLoginUser(this IEndpointRouteBuilder app)
     {
         app.MapPost("/auth/login", Login).WithTags("Auth").RequireRateLimiting("Login");
@@ -36,11 +39,23 @@ public static class LoginUser
 
         var user = await users.FindByEmailAsync(request.Email);
 
-        if (user is null || !await users.CheckPasswordAsync(user, request.Password))
+        bool passwordValid;
+
+        if (user is null)
+        {
+            users.PasswordHasher.VerifyHashedPassword(new User(), DummyHash.Value, request.Password);
+            passwordValid = false;
+        }
+        else
+        {
+            passwordValid = await users.CheckPasswordAsync(user, request.Password);
+        }
+
+        if (user is null || !passwordValid)
         {
             return Results.ValidationProblem(new Dictionary<string, string[]>
             {
-                ["Credentials"] = ["Invalid email or password"]
+                ["credentials"] = ["Invalid email or password"]
             });
         }
 

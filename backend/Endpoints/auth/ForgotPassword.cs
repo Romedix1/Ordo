@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Ordo.Api.Entities;
 using Ordo.Api.Services;
 
 namespace Ordo.Api.Endpoints;
@@ -9,12 +10,12 @@ public static class ForgotPassword
 
     public static IEndpointRouteBuilder MapForgotPassword(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/auth/forgot-password", Send).WithTags("Auth");
+        app.MapPost("/auth/forgot-password", SendAsync).WithTags("Auth").RequireRateLimiting("EmailResend");
 
         return app;
     }
 
-    private static async Task<IResult> Send(Request request, UserManager<User> users, EmailForgotPasswordService forgotPassword, CancellationToken ct)
+    private static async Task<IResult> SendAsync(Request request, UserManager<User> users, EmailForgotPasswordService forgotPassword, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(request.Email))
         {
@@ -28,7 +29,7 @@ public static class ForgotPassword
 
         if (user is not null && user.EmailConfirmed)
         {
-            await forgotPassword.Send(user, ct);
+            await forgotPassword.SendAsync(user, ct);
         }
 
         return Results.NoContent();

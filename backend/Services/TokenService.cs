@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Ordo.Api.Data;
+using Ordo.Api.Entities;
 
 namespace Ordo.Api.Services;
 
