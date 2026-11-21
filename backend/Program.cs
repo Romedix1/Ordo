@@ -13,10 +13,11 @@ using Ordo.Api.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
-builder.Services
-    .AddIdentityCore<User>(options =>
+builder
+    .Services.AddIdentityCore<User>(options =>
     {
         options.Password.RequiredLength = 8;
         options.Password.RequireLowercase = true;
@@ -27,20 +28,24 @@ builder.Services
         options.User.RequireUniqueEmail = true;
     })
     .AddEntityFrameworkStores<AppDbContext>()
-.AddDefaultTokenProviders();
+    .AddDefaultTokenProviders();
 
 var origins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? [];
 
-builder.Services.AddCors(option => option.AddPolicy("Frontend", policy => policy
-    .WithOrigins(origins)
-    .WithHeaders("Content-Type", "Authorization")
-    .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE")
-    .AllowCredentials()));
+builder.Services.AddCors(option =>
+    option.AddPolicy("Frontend", policy =>
+        policy
+            .WithOrigins(origins)
+            .WithHeaders("Content-Type", "Authorization")
+            .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE")
+            .AllowCredentials()
+    )
+);
 
 builder.Services.AddRateLimiting();
 
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder
+    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         var jwt = builder.Configuration.GetSection("Jwt");
@@ -58,7 +63,9 @@ builder.Services
         };
     });
 
-builder.Services.Configure<DataProtectionTokenProviderOptions>(option => option.TokenLifespan = TimeSpan.FromHours(24));
+builder.Services.Configure<DataProtectionTokenProviderOptions>(option =>
+    option.TokenLifespan = TimeSpan.FromHours(24)
+);
 builder.Services.AddScoped<EmailConfirmationService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<EmailForgotPasswordService>();
@@ -66,11 +73,14 @@ builder.Services.AddDataProtection();
 builder.Services.AddSingleton<EmailService>();
 builder.Services.AddScoped<EmailOutbox>();
 builder.Services.AddHostedService<EmailOutboxProcessor>();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 app.UseCors("Frontend");
 app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRegisterUser();
 app.MapResendConfirmationEmail();
@@ -78,5 +88,7 @@ app.MapVerifyEmail();
 app.MapLoginUser();
 app.MapForgotPassword();
 app.MapChangePassword();
+app.MapGetUserDetails();
+app.MapRefreshAccessToken();
 
 app.Run();

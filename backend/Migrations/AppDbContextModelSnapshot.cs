@@ -85,7 +85,7 @@ namespace Ordo.Api.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<Guid>("UserID")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -93,7 +93,7 @@ namespace Ordo.Api.Migrations
                     b.HasIndex("TokenHash")
                         .IsUnique();
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
                 });
@@ -105,6 +105,9 @@ namespace Ordo.Api.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AvatarColor")
                         .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -159,7 +162,7 @@ namespace Ordo.Api.Migrations
                 {
                     b.HasOne("Ordo.Api.Entities.User", null)
                         .WithMany()
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
