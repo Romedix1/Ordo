@@ -8,6 +8,7 @@ interface InputProps {
   action?: React.ReactNode;
   error?: string;
   endAdornment?: React.ReactNode;
+  startAdornment?: React.ReactNode;
 }
 
 export const inputStyles = cva(
@@ -33,21 +34,30 @@ export const Input = ({
   error,
   className,
   endAdornment,
+  startAdornment,
   type,
   id,
   ...props
 }: React.ComponentProps<"input"> & InputProps) => {
   return (
     <div className="flex w-full flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <label htmlFor={id} className="text-sm font-medium text-foreground">
-          {label}
-        </label>
+      {label && (
+        <div className="flex items-center justify-between">
+          <label htmlFor={id} className="text-sm font-medium text-foreground">
+            {label}
+          </label>
 
-        {action}
-      </div>
+          {action}
+        </div>
+      )}
 
       <div className="relative">
+        {startAdornment && (
+          <div className="absolute inset-y-0 left-2 flex items-center">
+            {startAdornment}
+          </div>
+        )}
+
         <InputPrimitive
           id={id}
           type={type}
@@ -55,6 +65,7 @@ export const Input = ({
           className={cn(
             inputStyles({ variant: error ? "error" : "default" }),
             endAdornment && "pr-10",
+            startAdornment && "pl-10",
             className,
           )}
           {...props}

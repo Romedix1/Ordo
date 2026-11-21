@@ -1,33 +1,57 @@
-import { BadgeColors, colorVariants } from "@/constants";
+import { colorVariants } from "@/constants";
 import { cn } from "cn";
+import Image from "next/image";
 
-export interface AvatarUser {
-  id: string;
-  initials: string;
+interface AvatarUser {
+  name: string;
+  avatarColor: number;
+  avatarUrl?: string | null;
 }
+
 interface AvatarProps {
   user: AvatarUser;
+  className?: string;
+  menuOpened?: boolean;
 }
 
-const getRandomBadgeColor = (userId: string): BadgeColors => {
-  const keys = Object.keys(colorVariants) as BadgeColors[];
+const getInitials = (name: string) => {
+  const words = name.trim().split(/\s+/);
 
-  const charSum = userId
-    .split("")
-    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  if (words.length === 0) return "?";
 
-  return keys[charSum % keys.length];
+  if (words.length === 1) {
+    return Array.from(words[0]).slice(0, 2).join("").toUpperCase();
+  }
+
+  const first = Array.from(words[0])[0];
+  const last = Array.from(words[words.length - 1])[0];
+
+  return (first + last).toUpperCase();
 };
 
-export const Avatar = ({ user }: AvatarProps) => {
+export const Avatar = ({ user, className, menuOpened }: AvatarProps) => {
+  const colors = Object.values(colorVariants);
+  const color = colors[user.avatarColor] ?? colors[0];
+
+  if (user.avatarUrl) {
+    return (
+      <Image
+        src={user.avatarUrl}
+        alt={user.name}
+        className={cn("w-6 h-6 rounded-full object-cover", className)}
+      />
+    );
+  }
+
   return (
     <div
       className={cn(
-        "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium",
-        colorVariants[getRandomBadgeColor(user.id)],
+        "p-2 rounded-full flex items-center justify-center text-xs font-medium",
+        "select-none cursor-pointer",
+        color,
       )}
     >
-      {user.initials}
+      {getInitials(user.name)}
     </div>
   );
 };
