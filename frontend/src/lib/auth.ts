@@ -2,7 +2,8 @@ import { ForgotPasswordValues } from "@/schemas/forgot-password";
 import { LoginValues } from "@/schemas/login";
 import { RegisterValues } from "@/schemas/register";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5259";
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5259";
 
 export class ApiError extends Error {
   constructor(
@@ -21,7 +22,7 @@ export class ValidationError extends ApiError {
   }
 }
 
-async function throwApiError(
+export async function throwApiError(
   response: Response,
   fallback = "Something went wrong. Try again.",
 ): Promise<never> {
