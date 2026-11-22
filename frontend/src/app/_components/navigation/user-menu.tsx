@@ -1,18 +1,20 @@
 "use client";
 
-import { Button, buttonVariants } from "@/app/_components/ui";
+import { buttonVariants } from "@/app/_components/ui";
 import { useAuth } from "@/providers";
-import { Menu, Separator } from "@base-ui/react";
+import { Menu } from "@base-ui/react";
 import { cn } from "cn";
 import { LogOut, User } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const MenuSeparator = () => {
   return <Menu.Separator className="-mx-1 my-2 h-px bg-border" />;
 };
 
 export const UserMenu = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const router = useRouter();
 
   if (!user) return null;
 
@@ -21,6 +23,14 @@ export const UserMenu = () => {
     className:
       "w-full justify-start data-[highlighted]:bg-secondary/80 data-[highlighted]:text-foreground",
   });
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+
+      router.push("/login");
+    } catch {}
+  };
 
   return (
     <Menu.Portal className={cn("", "bg-")}>
@@ -44,7 +54,7 @@ export const UserMenu = () => {
 
           <MenuSeparator />
 
-          <Menu.Item className={itemClass}>
+          <Menu.Item onClick={handleLogout} className={itemClass}>
             <LogOut /> Sign out
           </Menu.Item>
         </Menu.Popup>
