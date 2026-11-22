@@ -8,3 +8,4 @@ export * from "./password-input";
 export * from "./card-container";
 export * from "./error-box";
 export * from "./success-box";
+export * from "./skeleton";

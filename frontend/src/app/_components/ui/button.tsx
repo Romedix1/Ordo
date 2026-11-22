@@ -2,8 +2,8 @@ import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
-const buttonVariants = cva(
-  "h-fit gap-2 rounded-lg flex items-center justify-center px-4 py-2 text-sm font-medium duration-200 outline-none hover:cursor-pointer focus-visible:ring-[3px] ring-ring/50 disabled:opacity-50 disabled:pointer-events-none",
+export const buttonVariants = cva(
+  "h-fit gap-2 rounded-lg flex items-center justify-center p-2 text-sm font-medium duration-200 outline-none hover:cursor-pointer focus-visible:ring-[3px] ring-ring/50 disabled:opacity-50 disabled:pointer-events-none",
   {
     variants: {
       variant: {

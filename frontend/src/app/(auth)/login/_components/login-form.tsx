@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { LoginSchema, LoginValues } from "@/schemas/login";
 import { loginUser, ValidationError } from "@/lib";
 import Link from "next/link";
+import { useAuth } from "@/providers";
 
 export const LoginForm = () => {
   const {
@@ -22,13 +23,15 @@ export const LoginForm = () => {
 
   const router = useRouter();
 
+  const { signIn } = useAuth();
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const response = await loginUser(data);
+      const { accessToken } = await loginUser(data);
 
-      if (response) {
-        router.push("/");
-      }
+      await signIn(accessToken);
+
+      router.push("/");
     } catch (error) {
       if (error instanceof ValidationError) {
         Object.entries(error.errors).forEach(([field, messages]) => {

@@ -9,11 +9,10 @@ using Ordo.Api.Entities;
 namespace Ordo.Api.Services;
 
 public class TokenService(IConfiguration config, AppDbContext db)
-
 {
     public string CreateAccessToken(User user)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
         var descriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity([
@@ -29,17 +28,49 @@ public class TokenService(IConfiguration config, AppDbContext db)
         return new JsonWebTokenHandler().CreateToken(descriptor);
     }
 
-    public async Task<(string Value, DateTime ExpiresAt)> CreateRefreshToken(User user, CancellationToken ct)
+    public async Task<(string Value, DateTime ExpiresAt)> CreateRefreshToken(
+        User user,
+        CancellationToken ct
+    )
     {
         var value = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
 
         var expires = DateTime.UtcNow.AddDays(7);
 
-        db.RefreshTokens.Add(new RefreshToken { Id = Guid.NewGuid(), UserID = user.Id, TokenHash = hash, ExpiresAt = expires });
+        db.RefreshTokens.Add(
+            new RefreshToken
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                TokenHash = hash,
+                ExpiresAt = expires,
+            }
+        );
 
         await db.SaveChangesAsync(ct);
 
         return (value, expires);
+    }
+
+    public const string RefreshCookieName = "refresh_token";
+
+    public static string HashToken(string value) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+
+    public static void SetRefreshCookie(HttpResponse response, string value, DateTime expiresAt)
+    {
+        response.Cookies.Append(
+            RefreshCookieName,
+            value,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = expiresAt,
+                Path = "/auth",
+            }
+        );
     }
 }

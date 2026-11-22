@@ -9,6 +9,7 @@ namespace Ordo.Api.Endpoints;
 public static class RegisterUser
 {
     public record Request(string Name, string Email, string Password);
+
     public record Response(Guid Id, string Email);
 
     public static IEndpointRouteBuilder MapRegisterUser(this IEndpointRouteBuilder app)
@@ -19,7 +20,12 @@ public static class RegisterUser
     }
 
     private static async Task<IResult> Register(
-        Request request, UserManager<User> userManager, EmailConfirmationService confirmation, CancellationToken ct, AppDbContext db)
+        Request request,
+        UserManager<User> userManager,
+        EmailConfirmationService confirmation,
+        CancellationToken ct,
+        AppDbContext db
+    )
     {
         var errors = new Dictionary<string, string[]>();
 
@@ -30,15 +36,25 @@ public static class RegisterUser
 
         foreach (var validator in userManager.PasswordValidators)
         {
-            var passwordResult = await validator.ValidateAsync(userManager, null!, request.Password);
+            var passwordResult = await validator.ValidateAsync(
+                userManager,
+                null!,
+                request.Password
+            );
 
             if (!passwordResult.Succeeded)
             {
-                errors["password"] = [.. passwordResult.Errors.Select((error) => error.Description)];
+                errors["password"] =
+                [
+                    .. passwordResult.Errors.Select((error) => error.Description),
+                ];
             }
         }
 
-        if (string.IsNullOrWhiteSpace(request.Email) || !new EmailAddressAttribute().IsValid(request.Email))
+        if (
+            string.IsNullOrWhiteSpace(request.Email)
+            || !new EmailAddressAttribute().IsValid(request.Email)
+        )
         {
             errors["email"] = ["Invalid email"];
         }
@@ -52,12 +68,14 @@ public static class RegisterUser
             return Results.ValidationProblem(errors);
         }
 
+        var colors = Enum.GetValues<BadgeColor>();
 
         var user = new User
         {
             Name = request.Name,
             Email = request.Email,
             UserName = request.Email,
+            AvatarColor = colors[Random.Shared.Next(colors.Length)],
         };
 
         await using var transaction = await db.Database.BeginTransactionAsync(ct);
