@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Identity;
-using Ordo.Api.Services;
 using Ordo.Api.Entities;
+using Ordo.Api.Services;
 
 namespace Ordo.Api.Endpoints;
 
 public static class LoginUser
 {
-    private static readonly Lazy<string> DummyHash = new(() => new PasswordHasher<User>().HashPassword(new User(), Guid.NewGuid().ToString()));
+    private static readonly Lazy<string> DummyHash = new(() =>
+        new PasswordHasher<User>().HashPassword(new User(), Guid.NewGuid().ToString())
+    );
 
     public record Request(string Email, string Password);
+
     public record Response(string AccessToken);
 
     public static IEndpointRouteBuilder MapLoginUser(this IEndpointRouteBuilder app)
@@ -18,7 +21,13 @@ public static class LoginUser
         return app;
     }
 
-    private static async Task<IResult> Login(Request request, UserManager<User> users, TokenService tokens, CancellationToken ct, HttpContext http)
+    private static async Task<IResult> Login(
+        Request request,
+        UserManager<User> users,
+        TokenService tokens,
+        CancellationToken ct,
+        HttpContext http
+    )
     {
         var errors = new Dictionary<string, string[]>();
 
@@ -43,7 +52,11 @@ public static class LoginUser
 
         if (user is null)
         {
-            users.PasswordHasher.VerifyHashedPassword(new User(), DummyHash.Value, request.Password);
+            users.PasswordHasher.VerifyHashedPassword(
+                new User(),
+                DummyHash.Value,
+                request.Password
+            );
             passwordValid = false;
         }
         else
@@ -53,31 +66,25 @@ public static class LoginUser
 
         if (user is null || !passwordValid)
         {
-            return Results.ValidationProblem(new Dictionary<string, string[]>
-            {
-                ["credentials"] = ["Invalid email or password"]
-            });
+            return Results.ValidationProblem(
+                new Dictionary<string, string[]> { ["credentials"] = ["Invalid email or password"] }
+            );
         }
 
         if (!user.EmailConfirmed)
         {
-            return Results.ValidationProblem(new Dictionary<string, string[]>
-            {
-                ["email"] = ["Please confirm your email address before logging in."]
-            });
+            return Results.ValidationProblem(
+                new Dictionary<string, string[]>
+                {
+                    ["email"] = ["Please confirm your email address before logging in."],
+                }
+            );
         }
 
         var accessToken = tokens.CreateAccessToken(user);
         var (refreshToken, expiresAt) = await tokens.CreateRefreshToken(user, ct);
 
-        http.Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            Expires = expiresAt,
-            Path = "/auth",
-        });
+        TokenService.SetRefreshCookie(http.Response, refreshToken, expiresAt);
 
         return Results.Ok(new Response(accessToken));
     }

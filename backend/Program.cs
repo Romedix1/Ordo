@@ -90,5 +90,6 @@ app.MapForgotPassword();
 app.MapChangePassword();
 app.MapGetUserDetails();
 app.MapRefreshAccessToken();
+app.MapLogoutUser();
 
 app.Run();
