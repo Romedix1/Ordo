@@ -1,6 +1,6 @@
 "use client";
 
-import { getMe, refreshAccessToken, type Me } from "@/lib";
+import { API_URL, getMe, refreshAccessToken, type Me } from "@/lib";
 import {
   createContext,
   useContext,
@@ -14,6 +14,7 @@ interface AuthContextValue {
   accessToken: string | null;
   loading: boolean;
   signIn: (accessToken: string) => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -26,6 +27,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signIn = async (token: string) => {
     setAccessToken(token);
     setUser(await getMe(token));
+  };
+
+  const signOut = async () => {
+    await fetch(`${API_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    }).catch(() => null);
+
+    setAccessToken(null);
+    setUser(null);
   };
 
   useEffect(() => {
@@ -43,7 +54,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, accessToken, loading, signIn }}>
+    <AuthContext.Provider
+      value={{ user, accessToken, loading, signIn, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
