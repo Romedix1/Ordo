@@ -15,13 +15,13 @@ export const Footer = async () => {
   return (
     <footer
       className={cn(
-        "mt-24 px-4 py-6 sm:p-6",
+        "px-4 py-6 sm:p-6",
         "border-t border-t-border",
         "flex flex-col gap-4 sm:flex-row sm:gap-0 sm:justify-between",
       )}
     >
       <div className="flex items-center gap-3 w-full">
-        <Logo size="sm" />
+        <Logo size="responsive" />
         <p className="text-[13px] text-[#71717a]">
           &copy; {dateYear} &bull; Built by Romedix1
         </p>

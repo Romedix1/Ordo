@@ -11,7 +11,6 @@ interface AvatarUser {
 interface AvatarProps {
   user: AvatarUser;
   className?: string;
-  menuOpened?: boolean;
 }
 
 const getInitials = (name: string) => {
@@ -29,7 +28,7 @@ const getInitials = (name: string) => {
   return (first + last).toUpperCase();
 };
 
-export const Avatar = ({ user, className, menuOpened }: AvatarProps) => {
+export const Avatar = ({ user, className }: AvatarProps) => {
   const colors = Object.values(colorVariants);
   const color = colors[user.avatarColor] ?? colors[0];
 
