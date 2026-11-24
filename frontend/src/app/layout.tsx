@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navigation } from "@/app/_components/navigation";
 import { AuthProvider } from "@/providers";
+import { Footer } from "@/app/_components";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <AuthProvider>
           <Navigation />
           {children}
+          <Footer />
         </AuthProvider>
       </body>
     </html>
