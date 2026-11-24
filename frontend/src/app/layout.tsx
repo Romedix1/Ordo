@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navigation } from "@/app/_components/navigation";
 import { AuthProvider } from "@/providers";
+import { Footer } from "@/app/_components";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -20,7 +21,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={cn(
-        "h-full dark",
+        "h-full dark scroll-smooth",
         "antialiased",
         geistSans.variable,
         "font-sans",
@@ -29,7 +30,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-background">
         <AuthProvider>
           <Navigation />
-          {children}
+          <main className="flex flex-1 flex-col">{children}</main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

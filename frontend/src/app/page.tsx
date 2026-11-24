@@ -1,5 +1,16 @@
+import { RedirectIfAuthenticated } from "@/app/_components/auth";
+import { GuestPage } from "@/app/_components/start/guest";
+import { cn } from "cn";
+
 export default function Home() {
   return (
-    <div className="flex items-start pt-48 flex-1  justify-center bg-zinc-50 dark:bg-black  gap-4"></div>
+    <div className="bg-background">
+      <div className={cn("container max-w-7xl mx-auto px-2", "sm:px-6")}>
+        <RedirectIfAuthenticated to="/dashboard">
+          {/* TODO: ADD FALLBACK LOADING PAGE */}
+          <GuestPage />
+        </RedirectIfAuthenticated>
+      </div>
+    </div>
   );
 }

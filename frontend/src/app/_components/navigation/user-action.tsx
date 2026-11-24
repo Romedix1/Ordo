@@ -7,12 +7,9 @@ import { Menu } from "@base-ui/react";
 import { cn } from "cn";
 import { Bell } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
 export const UserAction = () => {
   const { user, loading } = useAuth();
-
-  const [menuOpen, setMenuOpen] = useState(false);
 
   if (loading) {
     return (
@@ -43,10 +40,7 @@ export const UserAction = () => {
                 "data-popup-open:ring-2 data-popup-open:ring-primary data-popup-open:ring-offset-background data-popup-open:ring-offset-2",
               )}
             >
-              <Avatar
-                user={{ ...user, avatarUrl: null }}
-                menuOpened={menuOpen}
-              />
+              <Avatar user={{ ...user, avatarUrl: null }} />
             </Menu.Trigger>
 
             <UserMenu />
@@ -57,7 +51,9 @@ export const UserAction = () => {
           <Button variant="ghost" render={<Link href={"/login"} />}>
             Sign in
           </Button>
-          <Button render={<Link href={"/register"} />}>Get started</Button>
+          <Button className="px-3 sm:px-4" render={<Link href={"/register"} />}>
+            Get started
+          </Button>
         </>
       )}
     </div>

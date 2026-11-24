@@ -26,16 +26,18 @@ export const Navigation = () => {
   }, []);
 
   const guestLinks = [
-    { text: "Features", url: "/" },
-    { text: "How it works", url: "/" },
+    { text: "Features", url: "/#does" },
+    { text: "How it works", url: "/#how" },
     { text: "Github", url: "https://github.com/Romedix1/Ordo" },
   ];
+
+  // TODO: FIX MOBILE NAVIGATION
 
   return (
     <nav
       aria-label="Main"
       className={cn(
-        "px-6 w-full flex justify-between items-center py-3 fixed",
+        "px-6 w-full flex justify-between items-center py-3 sticky top-0",
         "bg-background border-b",
       )}
     >
@@ -70,10 +72,10 @@ export const Navigation = () => {
         </div>
       ) : (
         <>
-          <Logo />
+          <Logo size="responsive" />
 
           {user ? (
-            <div className="hidden sm:block min-w-[320px]">
+            <div className={cn("hidden min-w-[320px]", "sm:block")}>
               <SearchBar
                 className="pr-20"
                 startAdornment={
@@ -87,16 +89,32 @@ export const Navigation = () => {
               />
             </div>
           ) : (
-            <ul className=" hidden sm:flex gap-6 text-sm font-medium text-muted-foreground">
+            <ul
+              className={cn(
+                "hidden gap-6 text-sm font-medium text-muted-foreground",
+                "sm:flex",
+              )}
+            >
               {guestLinks.map((link) => {
+                const linkStyles =
+                  "rounded-md outline-none hover:text-foreground focus-visible:ring-2 focus-visible:text-foreground focus-visible:ring-primary duration-200";
+
                 return (
                   <li key={`guest-link-${link.text}`}>
-                    <Link
-                      className="rounded-md outline-none hover:text-foreground focus-visible:ring-2 focus-visible:text-foreground focus-visible:ring-primary duration-200"
-                      href={link.url}
-                    >
-                      {link.text}
-                    </Link>
+                    {link.url.startsWith("http") ? (
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={linkStyles}
+                      >
+                        {link.text}
+                      </a>
+                    ) : (
+                      <Link href={link.url} className={linkStyles}>
+                        {link.text}
+                      </Link>
+                    )}
                   </li>
                 );
               })}
